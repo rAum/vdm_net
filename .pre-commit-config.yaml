@@ -1,0 +1,57 @@
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.5.0
+      hooks:
+          - id: check-case-conflict
+          - id: check-merge-conflict
+          - id: trailing-whitespace
+            exclude: .bumpversion.cfg|notebooks/.*\.py
+          - id: check-ast
+          - id: check-added-large-files
+          - id: check-toml
+          - id: check-json
+          - id: check-yaml
+
+    # Checks Python source files for errors, sorts imports alphabetically and cleans unused imports.
+    - repo: https://github.com/charliermarsh/ruff-pre-commit
+      rev: v0.1.5
+      hooks:
+          - id: ruff
+            types_or: [ python, pyi,]
+            exclude: (/test_|tests/|docs/|notebooks/)
+          - id: ruff-format
+            types_or: [ python, pyi,]
+            exclude: (docs/)
+
+      # Save .ipynb to .py:percent format
+    - repo: https://github.com/mwouts/jupytext
+      rev: v1.15.2
+      hooks:
+        - id: jupytext
+          args: ["--from", ".ipynb", "--to", "py:percent", "--pipe-fmt", "black"]
+          files: "\\.ipynb$"
+          additional_dependencies:
+            - black==23.10.1
+
+    # Modernizes python code and upgrade syntax for newer versions of the language
+    - repo: https://github.com/asottile/pyupgrade
+      rev: v3.15.0
+      hooks:
+          - id: pyupgrade
+            args: [--py38-plus]# Used to have proper type annotations for library code.
+    - repo: https://github.com/pre-commit/mirrors-mypy
+      rev: v1.6.1
+      hooks:
+          - id: mypy
+            args: []
+            additional_dependencies: []
+            exclude: (/test_|setup.py|/tests/|docs/|notebooks/)
+
+      # Finds common security issues in Python code.
+    - repo: https://github.com/PyCQA/bandit
+      rev: 1.7.5
+      hooks:
+          - id: bandit
+            args: [-c, pyproject.toml, --recursive, src]
+            additional_dependencies: [".[toml]"] # required for pyproject.toml support
+            exclude:  (notebooks/)

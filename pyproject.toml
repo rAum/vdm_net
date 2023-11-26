@@ -1,0 +1,100 @@
+[build-system]
+requires = [
+    "setuptools >= 40.9.0",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest]
+norecursedirs=[
+    '.git',
+    '.tox',
+    '.env',
+    'dist',
+    'build',
+    'migrations',
+    'docker',
+    'config',
+    'notebooks',
+    'research',
+]
+python_files = ['test_*.py']
+addopts = [
+    '-ra',
+    '--showlocals',
+    '--strict-markers',
+    '--ignore=docs/conf.py',
+    '--ignore=setup.py',
+    '--ignore=ci',
+    '--ignore=.eggs',
+    '--doctest-modules',
+    '--doctest-glob=\*.rst',
+    '--tb=short',
+]
+
+testpaths = ['tests']
+
+[tool.mypy]
+warn_unused_configs = true
+ignore_missing_imports = true
+warn_unused_ignores = false
+show_error_codes = true
+check_untyped_defs = true
+no_implicit_optional = true
+mypy_path=['src']
+
+[[tool.mypy.overrides]]
+module = "vdm_net.*"
+ignore_missing_imports = false
+disallow_untyped_defs = true
+
+
+[tool.ruff]
+line-length=120
+
+select = [
+    # Pyflakes
+    "F",
+    # Pycodestyle
+    "E", "W",
+    # Isort
+    "I001", "I002",
+    # Pydocstyle
+    # "D",
+    # Pylint
+    "PL",
+    # flake8-builtins
+    "A",
+    # flake8-bugbear
+    "B",
+    # flake8-print
+    "T20",
+    # flake8-simplify
+    "SIM",
+    # flake8-comprehensions
+    "C4"
+]
+
+ignore = [
+  # line too long - is to be checked by black
+  "E501",
+  # Missing module docstring
+  "D104",
+  # Disables imperative mood in docstrings
+  "D401",
+  # Missing docstring in __init__
+  "D107",
+  # allow print()
+  "T201",
+]
+fix = true
+fixable = ["I001"]
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.bandit]
+exclude_dirs = ["venv"]
+# B101 disables errors for asserts in the code
+# remember to not use asserts for security and control flows
+skips = ["B101"]
